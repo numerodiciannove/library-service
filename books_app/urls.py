@@ -6,7 +6,7 @@ app_name = "airport_app"
 
 router = routers.DefaultRouter()
 
-router.register("books", BookViewSet)
+router.register("", BookViewSet)
 
 
 urlpatterns = [
