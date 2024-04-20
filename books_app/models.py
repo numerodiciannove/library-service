@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Book(models.Model):
     class CoverChoices(models.TextChoices):
         HARD = "HARD", "Hard"
@@ -16,7 +17,7 @@ class Book(models.Model):
     daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
 
     class Meta:
-        unique_together ("title", "author")
+        unique_together = ("title", "author")
 
     def __str__(self):
         return f"{self.title} - {self.author}, available - {self.inventory}"
