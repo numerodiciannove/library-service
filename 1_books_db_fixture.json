@@ -1,0 +1,134 @@
+[
+  {
+    "model": "books_app.book",
+    "pk": 1,
+    "fields": {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "cover": "HARD",
+      "inventory": 8,
+      "daily_fee": "2.29"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 2,
+    "fields": {
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "cover": "SOFT",
+      "inventory": 12,
+      "daily_fee": "1.99"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 3,
+    "fields": {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J.K. Rowling",
+      "cover": "HARD",
+      "inventory": 20,
+      "daily_fee": "2.99"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 4,
+    "fields": {
+      "title": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "cover": "SOFT",
+      "inventory": 6,
+      "daily_fee": "2.19"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 5,
+    "fields": {
+      "title": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "cover": "HARD",
+      "inventory": 10,
+      "daily_fee": "2.49"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 6,
+    "fields": {
+      "title": "Jane Eyre",
+      "author": "Charlotte Brontë",
+      "cover": "SOFT",
+      "inventory": 15,
+      "daily_fee": "1.79"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 7,
+    "fields": {
+      "title": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
+      "author": "C.S. Lewis",
+      "cover": "HARD",
+      "inventory": 8,
+      "daily_fee": "2.29"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 8,
+    "fields": {
+      "title": "Moby-Dick",
+      "author": "Herman Melville",
+      "cover": "HARD",
+      "inventory": 12,
+      "daily_fee": "2.19"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 9,
+    "fields": {
+      "title": "The Lord of the Rings: The Fellowship of the Ring",
+      "author": "J.R.R. Tolkien",
+      "cover": "HARD",
+      "inventory": 15,
+      "daily_fee": "3.49"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 10,
+    "fields": {
+      "title": "The Picture of Dorian Gray",
+      "author": "Oscar Wilde",
+      "cover": "SOFT",
+      "inventory": 7,
+      "daily_fee": "2.59"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 11,
+    "fields": {
+      "title": "The Hunger Games",
+      "author": "Suzanne Collins",
+      "cover": "HARD",
+      "inventory": 18,
+      "daily_fee": "2.09"
+    }
+  },
+  {
+    "model": "books_app.book",
+    "pk": 12,
+    "fields": {
+      "title": "The Da Vinci Code",
+      "author": "Dan Brown",
+      "cover": "HARD",
+      "inventory": 10,
+      "daily_fee": "2.99"
+    }
+  }
+]
