@@ -9,6 +9,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/books/", include("books_app.urls", namespace="books")),
     path("api/v1/users/", include("users_app.urls", namespace="users")),
+    path("api/v1/borrowings/", include("borrowings_app.urls", namespace="borrowings")),
 ]
 
 # Swagger documentation
