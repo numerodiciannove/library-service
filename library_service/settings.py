@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "books_app",
     "users_app",
+    "borrowings_app",
 ]
 
 MIDDLEWARE = [
@@ -140,7 +141,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
-
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "AUTH_HEADER_TYPES": ("XXX",),
 }
