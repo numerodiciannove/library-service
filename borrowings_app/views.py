@@ -1,4 +1,6 @@
 from django.utils import timezone
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -48,6 +50,23 @@ class BorrowingViewSet(ModelViewSet):
 
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="is_active",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description="Filter borrowing what's currently active",
+            ),
+            OpenApiParameter(
+                name="user_id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description="See other users borrowings if you are admin",
+            ),
+        ]
+
+    )
     def list(self, request, *args, **kwargs):
         """
         Get a list of borrowings with optional filtering.
@@ -60,12 +79,11 @@ class BorrowingViewSet(ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-
     @action(
         detail=True,
         methods=["POST"],
         url_path="return",
-        permission_classes = [IsAdminUser, IsAuthenticated], )
+        permission_classes=[IsAdminUser, IsAuthenticated], )
     def return_borrowing(self, request, pk=None):
         borrowing = self.get_object()
 
