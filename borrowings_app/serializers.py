@@ -4,6 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 from borrowings_app.models import Borrowing
 from users_app.serializers import UserSerializer
+from utils.telegram import message_sender
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -60,6 +61,12 @@ class BorrowingCreateSerializer(BorrowingSerializer):
             )
             book.inventory -= 1
             book.save()
+            message_sender(
+                f"🤓{user.first_name} {user.last_name} - {user.email}\n"
+                f"Borrowed 📓{book}.\n"
+                f"Borrow date - {borrow_date}.\n"
+                f"Promises to return - {expected_return_date}."
+            )
             return borrowing
 
     class Meta:
