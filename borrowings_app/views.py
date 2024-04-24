@@ -15,7 +15,7 @@ from borrowings_app.serializers import (
 
 
 class BorrowingViewSet(ModelViewSet):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("user", "book").all()
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
 
@@ -65,7 +65,6 @@ class BorrowingViewSet(ModelViewSet):
                 description="See other users borrowings if you are admin",
             ),
         ]
-
     )
     def list(self, request, *args, **kwargs):
         """
@@ -83,14 +82,15 @@ class BorrowingViewSet(ModelViewSet):
         detail=True,
         methods=["POST"],
         url_path="return",
-        permission_classes=[IsAdminUser, IsAuthenticated], )
+        permission_classes=[IsAdminUser, IsAuthenticated],
+    )
     def return_borrowing(self, request, pk=None):
         borrowing = self.get_object()
 
         if borrowing.actual_return_date:
             return Response(
                 {"message": "This borrowing has already been returned."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         borrowing.actual_return_date = timezone.now()
@@ -102,7 +102,7 @@ class BorrowingViewSet(ModelViewSet):
 
         return Response(
             {"message": "Borrowing returned successfully."},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
     @staticmethod
