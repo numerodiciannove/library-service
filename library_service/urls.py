@@ -9,7 +9,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/books/", include("books_app.urls", namespace="books")),
     path("api/v1/users/", include("users_app.urls", namespace="users")),
-    path("api/v1/borrowings/", include("borrowings_app.urls", namespace="borrowings")),
+    path(
+        "api/v1/borrowings/",
+        include("borrowings_app.urls", namespace="borrowings"),
+    ),
 ]
 
 # Swagger documentation
@@ -20,4 +23,9 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+]
+
+# Django Debug Toolbar
+urlpatterns += [
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
