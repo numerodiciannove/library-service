@@ -6,7 +6,7 @@ from borrowings_app.models import Borrowing
 from users_app.serializers import UserSerializer
 
 
-class BorrowSerializer(serializers.ModelSerializer):
+class BorrowingSerializer(serializers.ModelSerializer):
     user = serializers.EmailField()
     book = serializers.CharField()
 
@@ -22,12 +22,12 @@ class BorrowSerializer(serializers.ModelSerializer):
         )
 
 
-class BorrowRetrieveSerializer(BorrowSerializer):
+class BorrowingRetrieveSerializer(BorrowingSerializer):
     book = BookSerializer(many=False, read_only=True)
     user = UserSerializer(many=False, read_only=True)
 
 
-class BorrowCreateSerializer(BorrowSerializer):
+class BorrowingCreateSerializer(BorrowingSerializer):
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
 
     def validate(self, data):
