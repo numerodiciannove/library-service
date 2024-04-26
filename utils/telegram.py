@@ -15,7 +15,7 @@ def message_sender(text_message: str) -> [dict, list]:
         url="https://api.telegram.org/bot{0}/{1}".format(
             telegram_bot_token, telegram_method
         ),
-        data={"chat_id": telegram_chat_id, "text": text_message}
+        data={"chat_id": telegram_chat_id, "text": text_message},
     ).json()
 
     return response
