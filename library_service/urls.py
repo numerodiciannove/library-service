@@ -13,6 +13,10 @@ urlpatterns = [
         "api/v1/borrowings/",
         include("borrowings_app.urls", namespace="borrowings"),
     ),
+    path(
+        "api/v1/payments/",
+        include("payments_app.urls",namespace="payments")
+    ),
 ]
 
 # Swagger documentation
