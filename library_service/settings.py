@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "books_app",
     "users_app",
     "borrowings_app",
+    "payments_app",
 ]
 
 STATIC_URL = "static/"
