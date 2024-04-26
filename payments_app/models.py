@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Payments(models.Model):
+class Payment(models.Model):
     class PayStatus(models.TextChoices):
         PENDING = "PENDING"
         PAID = "PAID"
