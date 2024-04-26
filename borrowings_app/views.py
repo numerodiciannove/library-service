@@ -1,5 +1,4 @@
 from django.utils import timezone
-from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
@@ -15,9 +14,14 @@ from borrowings_app.serializers import (
 
 
 class BorrowingViewSet(ModelViewSet):
-    queryset = Borrowing.objects.select_related("user", "book").all()
+    queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def _params_to_ints(qs):
+        """Converts a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(",") if str_id]
 
     def get_serializer_class(self):
         """
@@ -29,54 +33,22 @@ class BorrowingViewSet(ModelViewSet):
             return BorrowingCreateSerializer
         return BorrowingSerializer
 
-    def get_filtered_queryset(self, request):
-        """
-        Filters the queryset based on user_id and/or is_active parameters
-        in the request query string.
-        """
+    def get_queryset(self):
         queryset = self.queryset
+        is_active_param = self.request.query_params.get("is_active")
+        user_id_param = self.request.query_params.get("user_id")
 
-        user_id = request.query_params.get("user_id")
-        is_active = request.query_params.get("is_active")
+        if is_active_param:
+            queryset = queryset.filter(actual_return_date=None)
 
-        if not request.user.is_staff:
-            queryset = queryset.filter(user=request.user)
+        if not self.request.user.is_staff:
+            return queryset.filter(user=self.request.user)
 
-        if user_id:
-            queryset = self._filter_by_user(queryset, user_id)
-
-        if is_active is not None:
-            queryset = self._filter_by_activity(queryset, is_active)
+        if user_id_param:
+            user_ids = self._params_to_ints(user_id_param)
+            queryset = queryset.filter(user__id__in=user_ids)
 
         return queryset
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="is_active",
-                type=OpenApiTypes.BOOL,
-                location=OpenApiParameter.QUERY,
-                description="Filter borrowing what's currently active",
-            ),
-            OpenApiParameter(
-                name="user_id",
-                type=OpenApiTypes.INT,
-                location=OpenApiParameter.QUERY,
-                description="See other users borrowings if you are admin",
-            ),
-        ]
-    )
-    def list(self, request, *args, **kwargs):
-        """
-        Get a list of borrowings with optional filtering.
-
-        This method returns a list of borrowings optionally filtered by user_id
-        and/or is_active parameters in the query string. Non-admin users
-        can only see their own borrowings.
-        """
-        queryset = self.get_filtered_queryset(request)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     @action(
         detail=True,
@@ -105,17 +77,32 @@ class BorrowingViewSet(ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @staticmethod
-    def _filter_by_user(queryset, user_id):
-        """
-        Filter the queryset by user_id.
-        """
-        return queryset.filter(user_id=user_id)
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "is_active",
+                type={"type": "list", "items": {"type": "any"}},
+                description="Filter borrowings by status (eg. ?is_active=)"
+            ),
+            OpenApiParameter(
+                "user_id",
+                type={"type": "list", "items": {"type": "number"}},
+                description=(
+                        "Admin user ids filter "
+                        "for borrowings (eg. ?user_id=1,3)")
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
-    @staticmethod
-    def _filter_by_activity(queryset, is_active):
-        """
-        This method filters the queryset by the provided is_active parameter.
-        """
-        is_active = is_active.lower() == "true"
-        return queryset.filter(actual_return_date__isnull=is_active)
+    def destroy(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return Response(
+                {"message": "You do not have permission to perform this action."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
