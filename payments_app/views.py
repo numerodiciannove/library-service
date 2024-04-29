@@ -1,6 +1,8 @@
 from borrowings_app.models import Borrowing
 from payments_app.models import Payment
 from payments_app.serializers import PaymentSerializer
+from rest_framework.exceptions import NotAuthenticated
+from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 
@@ -14,8 +16,15 @@ class PaymentViewSet(ReadOnlyModelViewSet):
         if user.is_staff:
             return Payment.objects.all()
 
-        user_borrowings_ids = Borrowing.objects.filter(
-            user=user
-        ).values_list('id', flat=True)
+        try:
+            user_borrowings_ids = Borrowing.objects.filter(
+                user=user
+            ).values_list("id", flat=True)
+        except Exception as e:
+            raise NotAuthenticated() from e
 
         return Payment.objects.filter(borrowing_id__in=user_borrowings_ids)
+
+
+class PaymentCreate(APIView):
+    pass
