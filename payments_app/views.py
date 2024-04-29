@@ -1,9 +1,8 @@
-from borrowings_app.models import Borrowing
-from payments_app.models import Payment
 from payments_app.serializers import PaymentSerializer
 from rest_framework.exceptions import NotAuthenticated
-from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from borrowings_app.models import Borrowing
+from payments_app.models import Payment
 
 
 class PaymentViewSet(ReadOnlyModelViewSet):
@@ -24,7 +23,3 @@ class PaymentViewSet(ReadOnlyModelViewSet):
             raise NotAuthenticated() from e
 
         return Payment.objects.filter(borrowing_id__in=user_borrowings_ids)
-
-
-class PaymentCreate(APIView):
-    pass
