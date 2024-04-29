@@ -1,3 +1,4 @@
+from borrowings_app.models import Borrowing
 from django.db import models
 
 
@@ -12,7 +13,11 @@ class Payment(models.Model):
 
     status = models.CharField(max_length=19, choices=PayStatus)
     type = models.CharField(max_length=19, choices=Type)
-    borrowing_id = models.IntegerField()
+    borrowing = models.ForeignKey(
+        Borrowing,
+        on_delete=models.CASCADE,
+        related_name="payments",
+    )
     session_url = models.URLField(max_length=255)
     session_id = models.CharField(max_length=255)
     money_to_pay = models.DecimalField(max_digits=5, decimal_places=2)
@@ -21,5 +26,5 @@ class Payment(models.Model):
         return (
             f"Type: '{self.type}', "
             f"Status:'{self.status}', "
-            f"Borrowing:{self.borrowing_id}"
+            f"Borrowing:{self.borrowing.id}"
         )
