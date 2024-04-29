@@ -14,7 +14,8 @@ def get_overdue_borrowings() -> List[Borrowing]:
 
 def generate_message(borrowing: Borrowing) -> str:
     return (
-        f"Dear {borrowing.user.email} - 🤓{borrowing.user.first_name} {borrowing.user.last_name}\n\n"
+        f"Dear {borrowing.user.email} - "
+        f"🤓{borrowing.user.first_name} {borrowing.user.last_name}\n\n"
         f"This is a gentle reminder that you have not yet returned the book:"
         f"\n\n📘{borrowing.book.title}\n\n"
         f"Borrowed from the library.\n"
@@ -26,7 +27,7 @@ def generate_message(borrowing: Borrowing) -> str:
     )
 
 
-def generate_all_messages() -> List[str]:
+def generate_all_borrowing_messages() -> List[str]:
     overdue_borrowings = get_overdue_borrowings()
     messages = [generate_message(borrowing) for borrowing in overdue_borrowings]
     return messages
