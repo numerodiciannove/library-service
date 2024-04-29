@@ -1,10 +1,6 @@
 from library_service.celery import app
 
-from utils.overdue_borrowings_text_generator import (
-    generate_all_borrowing_messages
-)
-
-from utils.telegram import message_sender
+from utils.telegram import message_sender, generate_all_borrowing_messages
 
 
 @app.task()
