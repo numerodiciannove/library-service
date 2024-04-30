@@ -1,10 +1,10 @@
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import status
+from rest_framework import status, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 from borrowings_app.models import Borrowing
 from borrowings_app.serializers import (
     BorrowingSerializer,
@@ -14,7 +14,13 @@ from borrowings_app.serializers import (
 from utils.stripe_sessions import create_payment
 
 
-class BorrowingViewSet(ModelViewSet):
+class BorrowingViewSet(
+                mixins.CreateModelMixin,
+                mixins.RetrieveModelMixin,
+                mixins.DestroyModelMixin,
+                mixins.ListModelMixin,
+                GenericViewSet
+):
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = [IsAuthenticated]
