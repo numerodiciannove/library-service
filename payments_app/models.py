@@ -3,22 +3,24 @@ from django.db import models
 
 
 class Payment(models.Model):
-    class PayStatus(models.TextChoices):
-        PENDING = "PENDING"
-        PAID = "PAID"
+    PAY_STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("PAID", "Paid"),
+    ]
 
-    class Type(models.TextChoices):
-        PAYMENT = "PAYMENT"
-        FINE = "FINE"
+    TYPE_CHOICES = [
+        ("PAYMENT", "Payment"),
+        ("FINE", "Fine"),
+    ]
 
     status = models.CharField(
         max_length=19,
-        choices=PayStatus,
+        choices=PAY_STATUS_CHOICES,
         default="PENDING"
     )
     type = models.CharField(
         max_length=19,
-        choices=Type,
+        choices=TYPE_CHOICES,
         default="PAYMENT"
     )
     borrowing = models.ForeignKey(

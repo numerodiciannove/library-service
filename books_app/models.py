@@ -2,16 +2,17 @@ from django.db import models
 
 
 class Book(models.Model):
-    class CoverChoices(models.TextChoices):
-        HARD = "HARD", "Hard"
-        SOFT = "SOFT", "Soft"
+    COVER_CHOICES = (
+        ("HARD", "Hard"),
+        ("SOFT", "Soft"),
+    )
 
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     cover = models.CharField(
         max_length=4,
-        choices=CoverChoices,
-        default=CoverChoices.HARD,
+        choices=COVER_CHOICES,
+        default="HARD",
     )
     inventory = models.PositiveSmallIntegerField()
     daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
