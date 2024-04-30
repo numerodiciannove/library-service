@@ -11,6 +11,7 @@ from borrowings_app.serializers import (
     BorrowingRetrieveSerializer,
     BorrowingCreateSerializer,
 )
+from utils.stripe_sessions import create_payment
 
 
 class BorrowingViewSet(ModelViewSet):
@@ -24,9 +25,6 @@ class BorrowingViewSet(ModelViewSet):
         return [int(str_id) for str_id in qs.split(",") if str_id]
 
     def get_serializer_class(self):
-        """
-        Return the appropriate serializer class based on the action.
-        """
         if self.action == "retrieve":
             return BorrowingRetrieveSerializer
         if self.action == "create":
@@ -49,6 +47,58 @@ class BorrowingViewSet(ModelViewSet):
             queryset = queryset.filter(user__id__in=user_ids)
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            borrowing = serializer.save()
+            payment = create_payment(
+                borrowing=borrowing,
+                payment_type="PAYMENT",
+            )
+            borrowing.payments.add(payment)
+            borrowing.save()
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=headers,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return Response(
+                {
+                    "message": "You do not have permission to perform this action."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "is_active",
+                type={"type": "list", "items": {"type": "any"}},
+                description="Filter borrowings by status (eg. ?is_active=)",
+            ),
+            OpenApiParameter(
+                "user_id",
+                type={"type": "list", "items": {"type": "number"}},
+                description=(
+                    "Admin user ids filter "
+                    "for borrowings (eg. ?user_id=1,3)"
+                ),
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     @action(
         detail=True,
@@ -76,33 +126,3 @@ class BorrowingViewSet(ModelViewSet):
             {"message": "Borrowing returned successfully."},
             status=status.HTTP_200_OK,
         )
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                "is_active",
-                type={"type": "list", "items": {"type": "any"}},
-                description="Filter borrowings by status (eg. ?is_active=)"
-            ),
-            OpenApiParameter(
-                "user_id",
-                type={"type": "list", "items": {"type": "number"}},
-                description=(
-                        "Admin user ids filter "
-                        "for borrowings (eg. ?user_id=1,3)")
-            )
-        ]
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-            return Response(
-                {"message": "You do not have permission to perform this action."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
