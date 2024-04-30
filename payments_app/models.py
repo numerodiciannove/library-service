@@ -11,8 +11,16 @@ class Payment(models.Model):
         PAYMENT = "PAYMENT"
         FINE = "FINE"
 
-    status = models.CharField(max_length=19, choices=PayStatus)
-    type = models.CharField(max_length=19, choices=Type)
+    status = models.CharField(
+        max_length=19,
+        choices=PayStatus,
+        default="PENDING"
+    )
+    type = models.CharField(
+        max_length=19,
+        choices=Type,
+        default="PAYMENT"
+    )
     borrowing = models.ForeignKey(
         Borrowing,
         on_delete=models.CASCADE,
@@ -23,8 +31,4 @@ class Payment(models.Model):
     money_to_pay = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return (
-            f"Type: '{self.type}', "
-            f"Status:'{self.status}', "
-            f"Borrowing:{self.borrowing.id}"
-        )
+        return f"Type: '{self.type}', " f"Status:'{self.status}'"
