@@ -1,4 +1,4 @@
-from books_app.permiossions import IsAdminUserOrReadOnly
+from books_app.permissions import IsAdminUserOrReadOnly
 from books_app.serializers import BookSerializer
 from rest_framework.viewsets import ModelViewSet
 from books_app.models import Book
