@@ -1,6 +1,10 @@
 from books_app.models import Book
 from books_app.serializers import BookSerializer
 from django.db import transaction
+from payments_app.serializers import (
+    PaymentBorrowingRetrieveSerializer,
+    PaymentBorrowingListSerializer,
+)
 from rest_framework import serializers
 from borrowings_app.models import Borrowing
 from users_app.serializers import UserSerializer
@@ -8,8 +12,9 @@ from utils.telegram import message_sender
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    user = serializers.EmailField()
     book = serializers.CharField()
+    user = serializers.EmailField()
+    payments = PaymentBorrowingListSerializer(many=True)
 
     class Meta:
         model = Borrowing
@@ -20,12 +25,14 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
+            "payments",
         )
 
 
 class BorrowingRetrieveSerializer(BorrowingSerializer):
     book = BookSerializer(many=False, read_only=True)
     user = UserSerializer(many=False, read_only=True)
+    payments = PaymentBorrowingRetrieveSerializer(many=True)
 
 
 class BorrowingCreateSerializer(BorrowingSerializer):
