@@ -56,8 +56,8 @@ class BorrowingCreateSerializer(BorrowingSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             book = validated_data["book"]
-            borrow_date = validated_data.pop("borrow_date")
-            expected_return_date = validated_data.pop("expected_return_date")
+            borrow_date = validated_data.get("borrow_date")
+            expected_return_date = validated_data.get("expected_return_date")
             user = self.context["request"].user
 
             borrowing = Borrowing.objects.create(
